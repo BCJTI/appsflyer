@@ -1,4 +1,4 @@
-package dispatcher
+package appsflyer
 
 import (
 	"fmt"
@@ -7,42 +7,35 @@ import (
 	"net/url"
 	"os"
 	"path"
-
-	"github.com/eure/appsflyer/util"
 )
 
-type (
-	RequiredParameter struct {
-		APIToken string
-		AppID    string
-		FromDate string
-		ToDate   string
-	}
-	OptionalParameter struct {
-		Category    string
-		MediaSource string
-		Reattr      string
-	}
-	BuckupOption struct {
-		Do func(*os.File) error
-	}
-	Client struct {
-		HTTPClient *http.Client
+type RequiredParameter struct {
+	APIToken string
+	AppID    string
+	FromDate string
+	ToDate   string
+}
 
-		APIBaseURL           string
-		APIRequiredParameter RequiredParameter
-		APIOptionalParameter OptionalParameter
+type OptionalParameter struct {
+	Category    string
+	MediaSource string
+	Reattr      string
+}
 
-		BuckupOption *BuckupOption
-	}
-)
+type BackupOption struct {
+	Do func(*os.File) error
+}
 
-const (
-	defaultAPIBaseURL = "https://hq.appsflyer.com"
-)
+type Client struct {
+	HTTPClient *http.Client
+	APIBaseURL string
+	APIRequiredParameter RequiredParameter
+	APIOptionalParameter OptionalParameter
+	BackupOption *BackupOption
+}
 
 func NewClient(appID, fromDate, toDate string) *Client {
-	return NewClientWithParam(util.GetAPIToken(), appID, fromDate, toDate)
+	return NewClientWithParam(os.Getenv("APPSFLYER_API_TOKEN"), appID, fromDate, toDate)
 }
 
 func NewClientWithParam(apiToken, appID, fromDate, toDate string) *Client {
@@ -62,11 +55,8 @@ func (c *Client) SetOptionalParameter(p OptionalParameter) {
 	c.APIOptionalParameter = p
 }
 
-func (c *Client) SetBuckupOption(o BuckupOption) {
-	c.BuckupOption = &o
-}
-
 func (c *Client) DispatchGetRequest(endpoint string) ([]byte, error) {
+
 	u, err := url.Parse(c.APIBaseURL)
 	if err != nil {
 		return nil, err
@@ -85,12 +75,16 @@ func (c *Client) DispatchGetRequest(endpoint string) ([]byte, error) {
 	if c.APIOptionalParameter.Category != "" {
 		values.Set("category", c.APIOptionalParameter.Category)
 	}
+
 	if c.APIOptionalParameter.MediaSource != "" {
 		values.Set("media_source", c.APIOptionalParameter.MediaSource)
 	}
+
 	if c.APIOptionalParameter.Reattr != "" {
 		values.Set("reattr", c.APIOptionalParameter.Reattr)
 	}
+
+	fmt.Println(urlString + "?" + values.Encode())
 
 	resp, err := c.HTTPClient.Get(urlString + "?" + values.Encode())
 	if err != nil {
@@ -106,8 +100,4 @@ func (c *Client) DispatchGetRequest(endpoint string) ([]byte, error) {
 		return nil, fmt.Errorf("StatusCode = %d, Message = %s ", resp.StatusCode, string(body))
 	}
 	return body, nil
-}
-
-func (c *Client) GetCSVFileNameByDateRange() string {
-	return fmt.Sprintf("appsflyer[%s~%s].csv", c.APIRequiredParameter.FromDate, c.APIRequiredParameter.ToDate)
 }
