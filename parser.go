@@ -3,7 +3,6 @@ package appsflyer
 import (
 	"encoding/csv"
 	"io"
-	"os"
 	"reflect"
 	"strings"
 )
@@ -12,20 +11,6 @@ func getReader(body []byte) *csv.Reader {
 	reader := csv.NewReader(strings.NewReader(strings.TrimSuffix(string(body), "\n")))
 	reader.FieldsPerRecord = -1
 	return reader
-}
-
-func Write(body []byte, file *os.File) error {
-	reader := getReader(body)
-	records, err := reader.ReadAll()
-	if err != nil {
-		return err
-	}
-	writer := csv.NewWriter(file)
-	if err := writer.WriteAll(records); err != nil {
-		return err
-	}
-	writer.Flush()
-	return nil
 }
 
 func Parse(body []byte, v interface{}, f func(result interface{})) error {
