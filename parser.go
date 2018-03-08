@@ -6,7 +6,6 @@ import (
 	"os"
 	"reflect"
 	"strings"
-	"github.com/F0urTw0/gos/misc"
 )
 
 func getReader(body []byte) *csv.Reader {
@@ -85,7 +84,7 @@ func Map(body []byte) (rows []map[string]interface{}, err error) {
 		return
 	}
 
-	for ;; {
+	for {
 
 		var line []string
 
@@ -103,12 +102,12 @@ func Map(body []byte) (rows []map[string]interface{}, err error) {
 
 		}
 
-		// init kpi record
+		// init report record
 		record := make(map[string]interface{})
 
 		// parse data to correct datatype
 		for i, column := range header {
-			record[column] = misc.StringToInterface(line[i])
+			record[column] = StringToInterface(line[i])
 		}
 
 		// append record
