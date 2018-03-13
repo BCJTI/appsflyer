@@ -14,6 +14,7 @@ type RequiredParameter struct {
 	AppID    string
 	FromDate string
 	ToDate   string
+	Report   string
 }
 
 type OptionalParameter struct {
@@ -22,16 +23,11 @@ type OptionalParameter struct {
 	Reattr      string
 }
 
-type BackupOption struct {
-	Do func(*os.File) error
-}
-
 type Client struct {
 	HTTPClient *http.Client
 	APIBaseURL string
 	APIRequiredParameter RequiredParameter
 	APIOptionalParameter OptionalParameter
-	BackupOption *BackupOption
 }
 
 func NewClient(appID, fromDate, toDate string) *Client {

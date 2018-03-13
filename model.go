@@ -5,7 +5,7 @@ import (
 )
 
 // https://support.appsflyer.com/hc/en-us/articles/208387843-Raw-Data-Reports-V5-
-type Report struct {
+type RawData struct {
 	AttributedTouchType       string `json:"attributed_touch_type"       csv:"Attributed Touch Type"`
 	AttributedTouchTime       string `json:"attributed_touch_time"       csv:"Attributed Touch Time"`
 	InstallTime               string `json:"install_time"                csv:"Install Time"`
@@ -90,14 +90,14 @@ type Report struct {
 	InstallAppStore           string `json:"install_app_store"           csv:"Install App Store"`
 }
 
-func (r *Report) GetAttributedTouchTime() (time.Time, error) {
+func (r *RawData) GetAttributedTouchTime() (time.Time, error) {
 	return ParseDateTimeFormat(r.AttributedTouchTime)
 }
 
-func (r *Report) GetInstallTime() (time.Time, error) {
+func (r *RawData) GetInstallTime() (time.Time, error) {
 	return ParseDateTimeFormat(r.InstallTime)
 }
 
-func (r *Report) GetEventTime() (time.Time, error) {
+func (r *RawData) GetEventTime() (time.Time, error) {
 	return ParseDateTimeFormat(r.EventTime)
 }

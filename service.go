@@ -8,7 +8,7 @@ func (c *Client) GetMaps(endpoint string) ([]map[string]interface{}, error) {
 	return Map(body)
 }
 
-func (c *Client) GetRawData(endpoint string) (entities []Report, err error) {
+func (c *Client) GetRawData(endpoint string) (entities []RawData, err error) {
 
 	var body []byte
 
@@ -18,8 +18,8 @@ func (c *Client) GetRawData(endpoint string) (entities []Report, err error) {
 	}
 
 	// parse csv to []Report
-	if err = Parse(body, Report{}, func(v interface{}) {
-		entities = append(entities, v.(Report))
+	if err = Parse(body, RawData{}, func(v interface{}) {
+		entities = append(entities, v.(RawData))
 	}); err != nil {
 		return
 	}
