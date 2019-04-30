@@ -47,7 +47,7 @@ func main() {
 ```go
 import (
 	"fmt"
-	"github.com/F0urTw0/appsflyer"
+	"github.com/bcjti/appsflyer"
 )
 
 func main() {
